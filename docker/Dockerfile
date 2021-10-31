@@ -14,8 +14,8 @@ USER user
 WORKDIR /home/user
 RUN mkdir  env
 COPY --chown=user:user Project.toml env/Project.toml
-COPY --chown=user:user Manifest.toml env/Manifest.toml
-RUN julia  -e 'using Pkg; Pkg.activate("env"); Pkg.instantiate(); Pkg.precompile();'
-RUN julia  -e 'using Pkg; Pkg.activate("env"); using Conda; Conda.add("jupyter"); Conda.add("matplotlib");'
+# COPY --chown=user:user Manifest.toml env/Manifest.toml
+RUN julia  -e 'using Pkg; Pkg.activate("env"); Pkg.instantiate();'
+RUN julia  -e 'using Pkg; Pkg.activate("env"); using Conda; Conda.add("jupyter"); Conda.add("matplotlib"); Pkg.precompile();'
 RUN mkdir /home/user/.jupyter/
-RUN echo "c.NotebookApp.ip = '0.0.0.0'\nc.NotebookApp.token = ''" > /home/user/.jupyter/jupyter_notebook_config.py
+RUN echo "c.NotebookApp.ip = '0.0.0.0'\nc.NotebookApp.token = ''" >> /home/user/.jupyter/jupyter_notebook_config.py
