@@ -10,6 +10,7 @@ function fit_polynomial_to_data_with_side_info(training_x, training_xdot;
                                 deg=2,
                                 solver=nothing,
                                 side_info = [],
+                                regularization=0.,
                                 verbose = true)
     n = size(training_x, 1)
     @polyvar x[1:n]
@@ -67,17 +68,18 @@ function fit_polynomial_to_data_with_side_info(training_x, training_xdot;
 
     objective = least_squares_error
 
-    # if verbose
-    #     println("(maybe) Add regularization")
-    # end
 
-    # if regularization
-    #     @variable model l2_penalty
-    #     coeffs = coefficients.(p)
-    #     coeffs = hcat(coeffs...)
-    #     @constraint model norm(coeffs) <= l2_penalty
-    #     objective = objective + regularization_scaling * l2_penalty
-    # end
+    if regularization > 0
+        if verbose
+        println("Add regularization")
+        end
+
+        @variable model l2_penalty
+        coeffs = coefficients.(p)
+        coeffs = hcat(coeffs...)
+        @constraint model [l2_penalty, coeffs...] in SecondOrderCone()
+        objective = objective + regularization * l2_penalty
+    end
 
     @objective model Min objective
 
