@@ -16,7 +16,7 @@ RUN mkdir  env
 COPY --chown=user:user Project.toml env/Project.toml
 # COPY --chown=user:user Manifest.toml env/Manifest.toml
 RUN julia  -e 'using Pkg; Pkg.activate("env"); Pkg.instantiate();'
-RUN julia  -e 'using Pkg; Pkg.activate("env"); using Conda; Conda.add("jupyter"); Conda.add("matplotlib"); Pkg.precompile();'
+RUN julia  -e 'using Pkg; Pkg.activate("env"); using Conda; Conda.add("jupyter"); Conda.add("matplotlib"); Conda.add("numpy"); Conda.add("pandas"); Conda.add("seaborn"); Pkg.precompile();'
 RUN julia -e 'using Pkg; Pkg.activate("env"); using IJulia; installkernel("Julia (Learning DS)", "--project=/home/user/env")'
 RUN bash -c "yes | /home/user/.julia/conda/3/bin/jupyter-kernelspec remove julia-1.6"
 RUN mkdir /home/user/.jupyter/
@@ -25,7 +25,8 @@ RUN echo "c.NotebookApp.ip = '0.0.0.0'\nc.NotebookApp.token = ''" >> /home/user/
 # jupyter extensions
 RUN .julia/conda/3/bin/pip install  jupyter_contrib_nbextensions &&\
     .julia/conda/3/bin/jupyter contrib nbextension install --user &&\
-    .julia/conda/3/bin/jupyter nbextension enable codefolding/main collapsible_headings/main
+    .julia/conda/3/bin/jupyter nbextension enable codefolding/main &&\
+    .julia/conda/3/bin/jupyter nbextension enable collapsible_headings/main
 
 
 # mosek licence
